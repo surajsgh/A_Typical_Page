@@ -13,9 +13,21 @@ const Login = props => {
 
   //  useEffect hook is generally used as an execution operation in response to an action. That action could be response to form input change,component being loaded, email address being changed etc.
   useEffect(() => {
-    setFormIsValid(
-      enteredEmail.includes('@') && enteredPassword.trim().length > 6
-    );
+    // But using this normal approach would generate lots of problems, since we'd be creating lots of network requests. Thus, we're gonna use debouncing(i.e. we won't be checking each of their keystrokes but we'll be checking their actions in specific amount of time continuously using setTimeout function).
+    const identifier = setTimeout(() => {
+      console.log('Checking form validity.');
+      setFormIsValid(
+        enteredEmail.includes('@') && enteredPassword.trim().length > 6
+      );
+    }, 500);
+
+    // Clean-up function
+    // This function would run before the above one after every action being performed on UI.
+    return () => {
+      console.log('CLEANUP!');
+      // clearTimeout is an in-built browser function which helps to clean-up the old data.
+      clearTimeout(identifier);
+    };
   }, [enteredEmail, enteredPassword]);
 
   const emailChangeHandler = event => {
